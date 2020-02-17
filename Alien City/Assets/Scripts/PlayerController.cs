@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour {
 	public Image vida;
 	private MensagemControle MC;
 
+	private float translationY;
+	private float translationX;
+
 	void Start () {
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
@@ -83,8 +86,11 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-		float translationY = 0;
-		float translationX = Input.GetAxis ("Horizontal") * Velocidade;
+//		float translationY = 0;
+//		float translationX = Input.GetAxis ("Horizontal") * Velocidade;
+		translationY = 0;
+		translationX = Input.GetAxis("Horizontal") * Velocidade;
+
 		transform.Translate (translationX, translationY, 0);
 		transform.Rotate (0, 0, 0);
 		/*
@@ -94,7 +100,6 @@ public class PlayerController : MonoBehaviour {
 					anim.SetTrigger("parado");
 				}
 		*/
-
 
 
 		// ******************** Testa se a personagem está em movimento, tocando no chão, ou armada, para controlar a animção ********************
@@ -112,7 +117,6 @@ public class PlayerController : MonoBehaviour {
 			else
 				anim.SetTrigger("parado_arma");
 		}
-
 
 
 
