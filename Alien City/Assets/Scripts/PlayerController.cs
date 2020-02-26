@@ -11,10 +11,15 @@ public class PlayerController : MonoBehaviour {
 	public Transform posPe;
 	/*[HideInInspector]*/ public bool tocaChao = false;
 	
-	public bool armado = false; // *************** Variável de controle. Guarda a informação se a personagem está aramada ou não ***************
+//	public bool armado = false; // *************** Variável de controle. Guarda a informação se a personagem está aramada ou não ***************
+	public int arma; // *************** Variável de controle. Guarda a informação de qual arma a personagem está usando ***************
 	public GameObject Tiro1_Prefab; // *************** Referência ao Prafab do projétil da arma1 ***************
+	public GameObject Tiro2_Prefab; // *************** Referência ao Prafab do projétil da arma2 ***************
+
 	private AudioSource audio; // *************** Referência para o componente AudioSource ***************
 	public AudioClip somDoTiro;
+
+	public Image iconeArma;
 
 	public float Velocidade;
 	public float ForcaPulo = 1000f;
@@ -32,6 +37,8 @@ public class PlayerController : MonoBehaviour {
 		audio = GetComponent<AudioSource>();
 
 		tocaChao = true; // ****************************** Inicia a cena com a personagem tocando o chão ******************************
+		arma = 0;
+		iconeArma.color = Color.clear;
 
 		GameObject mensagemControleObject = GameObject.FindWithTag ("MensagemControle");
 		if (mensagemControleObject != null) {
@@ -43,20 +50,28 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		//Implementar Pulo Aqui! 
 
-		// ************************* Implementa o botão para pegar sacar/guardar a arma *************************
+		// ************************* Implementa o botão para pegar sacar/trocar/guardar a arma *************************
 		if (Input.GetButtonDown("Fire2"))
 		{
-			if (armado == false)
-				armado = true;
+			if (arma <= 1)
+			{
+				arma++;
+				iconeArma.color = Color.white;
+				iconeArma.sprite = Resources.Load<Sprite>("Imagens/arma"+arma);
+			}
 			else
-				armado = false;
+			{
+				arma = 0;
+				iconeArma.color = Color.clear;
+				iconeArma.sprite = Resources.Load<Sprite>("");
+			}
 		}
 
-
+		
 		// ************************* Instancia o tiro *************************
 		if (Input.GetButtonDown("Fire1"))
 		{
-			if (armado == true)
+			if (arma == 1) // *************** Instancia o tiro da arma 1 ***************
 			{
 				/*				Vector3 position = new Vector3(transform.position.x + (transform.localScale.x/2), transform.position.y - (transform.localScale.y - 1.1f)); // Armazena a posição do player na variável 'position'
 								GameObject instance = Instantiate(Tiro1_Prefab, position, Quaternion.identity) as GameObject; // Instancia o Prefab do tiro e guarda uma referência
@@ -75,6 +90,30 @@ public class PlayerController : MonoBehaviour {
 				{
 					Vector3 position = new Vector3(transform.position.x + ((transform.localScale.x-0.5f)), transform.position.y - (transform.localScale.y - 1.1f)); // Armazena a posição do player na variável 'position'
 					GameObject instance = Instantiate(Tiro1_Prefab, position, Quaternion.identity) as GameObject; // Instancia o Prefab do tiro e guarda uma referência
+					instance.gameObject.SendMessage("Virado_E");
+				}
+				audio.clip = somDoTiro;
+				audio.Play(); ;
+			}
+			if (arma == 2) // *************** Instancia o tiro da arma 2 ***************
+			{
+				/*				Vector3 position = new Vector3(transform.position.x + (transform.localScale.x/2), transform.position.y - (transform.localScale.y - 1.1f)); // Armazena a posição do player na variável 'position'
+								GameObject instance = Instantiate(Tiro1_Prefab, position, Quaternion.identity) as GameObject; // Instancia o Prefab do tiro e guarda uma referência
+								if (viradoDireita == true)
+									instance.gameObject.SendMessage("Virado_D"); // *************** Envia mensagem para a instância do projétil 
+								else
+									instance.gameObject.SendMessage("Virado_E"); */
+
+				if (viradoDireita == true)
+				{
+					Vector3 position = new Vector3(transform.position.x + ((transform.localScale.x + 0.5f)), transform.position.y - (transform.localScale.y - 1.1f)); // Armazena a posição do player na variável 'position'
+					GameObject instance = Instantiate(Tiro2_Prefab, position, Quaternion.identity) as GameObject; // Instancia o Prefab do tiro e guarda uma referência
+					instance.gameObject.SendMessage("Virado_D"); // *************** Envia mensagem para a instância do projétil 
+				}
+				else
+				{
+					Vector3 position = new Vector3(transform.position.x + ((transform.localScale.x - 0.5f)), transform.position.y - (transform.localScale.y - 1.1f)); // Armazena a posição do player na variável 'position'
+					GameObject instance = Instantiate(Tiro2_Prefab, position, Quaternion.identity) as GameObject; // Instancia o Prefab do tiro e guarda uma referência
 					instance.gameObject.SendMessage("Virado_E");
 				}
 				audio.clip = somDoTiro;
@@ -105,17 +144,26 @@ public class PlayerController : MonoBehaviour {
 		// ******************** Testa se a personagem está em movimento, tocando no chão, ou armada, para controlar a animção ********************
 		if (translationX != 0 && tocaChao)
 		{
-			if (!armado)
+			if (arma == 0)
 				anim.SetTrigger("corre");
 			else
-				anim.SetTrigger("corre_arma");
+				if (arma == 1)
+				anim.SetTrigger("corre_arma_1");
+			else
+				if (arma == 2)
+				anim.SetTrigger("corre_arma_2");
+
 		}
 		else
 		{
-			if (!armado)
+			if (arma == 0)
 				anim.SetTrigger("parado");
 			else
-				anim.SetTrigger("parado_arma");
+				if (arma == 1)
+				anim.SetTrigger("parado_arma_1");
+			else
+				if (arma == 2)
+				anim.SetTrigger("parado_arma_2");
 		}
 
 
