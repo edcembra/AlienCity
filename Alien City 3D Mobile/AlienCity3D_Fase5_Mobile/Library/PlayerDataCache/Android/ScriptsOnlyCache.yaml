@@ -667,4 +667,4 @@ ScriptsOnlyBuild:
   platform: 13
   scenePathNames:
   - Assets/Cenas/Jogo.unity
-  playerPath: C:/Workspace/GitHub/Builds/AlienCity3D.apk
+  playerPath: C:/Workspace/GitHub/Builds/AlienCity3DMobile.apk
